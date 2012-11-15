@@ -4,7 +4,7 @@ Caf8teen is a software package that runs a LED lighting installation in Cafe 18 
 
 ## Installation
  * Install Processing, available at http://processing.org
- * Unzip externals/HeronLX.zip and install into the folder ~/Documents/Processing/libraries/HeronLX
+ * Unzip external/HeronLX.zip and install into the folder ~/Documents/Processing/libraries/HeronLX
  * Open Caf8teen/Caf8teen.pde in Processing
 
 
