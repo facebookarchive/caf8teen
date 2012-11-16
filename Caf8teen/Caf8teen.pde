@@ -146,7 +146,7 @@ void setup() {
     new MorningSunrise(lx).runDuringInterval(5*O_CLOCK, 7*O_CLOCK).setTransition(rain),    
   });
   lx.cycleBaseHue(90*SECONDS);
-  lx.enableAutoTransition(20*SECONDS);
+  lx.enableAutoTransition(5*MINUTES);
   lx.enableSimulation(false);
 
   setKinet();
