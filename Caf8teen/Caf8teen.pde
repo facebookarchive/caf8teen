@@ -127,19 +127,26 @@ void setup() {
    
   LXTransition dissolve = new DissolveTransition(lx).setDuration(10000);
   LXTransition rain = (new WipeTransition(lx, WipeTransition.Direction.DOWN).setDuration(5000));
-   
+  
+  final int O_CLOCK = 60;
+  final int SECONDS = 1000;
+  final int MINUTES = 60*SECONDS;
+  
+  
   lx.setPatterns(new LXPattern[] {
+    new LifePattern(lx).setTransition(dissolve),
     new RainingLogo(lx).setTransition(rain),
     new SinWaves(lx).setTransition(dissolve),
     new Graph(lx).setTransition(dissolve),
     new WaitInLine(lx).setTransition(dissolve),
     new FadingBoxes(lx).setTransition(dissolve),
     new Blobbers(lx).setTransition(dissolve),
-    new LifePattern(lx).setTransition(dissolve),
     new EnterTheDoors(lx).setTransition(dissolve),
-    new EveningStars(lx).setTransition(dissolve),
+    new EveningStars(lx).runDuringInterval(22*O_CLOCK, 5*O_CLOCK).setTransition(dissolve),
+    new MorningSunrise(lx).runDuringInterval(5*O_CLOCK, 7*O_CLOCK).setTransition(rain),    
   });
-  lx.cycleBaseHue(90000);
+  lx.cycleBaseHue(90*SECONDS);
+  lx.enableAutoTransition(20*SECONDS);
   lx.enableSimulation(false);
 
   setKinet();
