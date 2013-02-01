@@ -20,6 +20,7 @@ import com.heronarts.lx.modulator.*;
 import com.heronarts.lx.pattern.*;
 import com.heronarts.lx.transition.*;
 import ddf.minim.*;
+import java.net.SocketException;
 
 final int numInnerColumns = 111;
 final color fbBlue = #3b5998;
@@ -133,7 +134,7 @@ void setup() {
   final int MINUTES = 60*SECONDS;
   
   
-  lx.setPatterns(new LXPattern[] {
+  /*lx.setPatterns(new LXPattern[] {
     new LifePattern(lx).setTransition(dissolve),
     new RainingLogo(lx).setTransition(rain),
     new SinWaves(lx).setTransition(dissolve),
@@ -144,6 +145,9 @@ void setup() {
     new EnterTheDoors(lx).setTransition(dissolve),
     new EveningStars(lx).runDuringInterval(22*O_CLOCK, 5*O_CLOCK).setTransition(dissolve),
     new MorningSunrise(lx).runDuringInterval(5*O_CLOCK, 7*O_CLOCK).setTransition(rain),    
+  });*/
+  lx.setPatterns(new LXPattern[] {
+    new NyanCat(lx).setTransition(dissolve),
   });
   lx.cycleBaseHue(90*SECONDS);
   lx.enableAutoTransition(5*MINUTES);
