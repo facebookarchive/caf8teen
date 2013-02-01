@@ -19,17 +19,25 @@
  */
 class NyanCat extends LXPattern {
 
-  NyanCat(HeronLX lx) {
+  PImage[] nyanframes = new PImage[12];
+  
+  NyanCat(HeronLX lx)   {
     super(lx);
-  }
-  
-  public void restart() {
-  }
-  
-  public void onActive() {
+    nyanframes[0] = loadImage("nyancat00.png");
+    nyanframes[0].loadPixels();
+    setColors(255);
   }
   
   public void run(int deltaMs) {
+    PImage img = nyanframes[0];
+    for (int x = 0; x < img.width; ++x) {
+      for (int y = 0; y < img.height; ++y) {
+        color c = img.get(x, y);
+        if (c != 255) {
+          setColor(x + 40, y, c);
+        }
+      }
+    }
   }
 }
 
