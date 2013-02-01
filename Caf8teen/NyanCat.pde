@@ -14,20 +14,21 @@
  * under the License.
  */
 
-/**
- * Nyan cat!
- */
-
 import java.util.LinkedList;
 
+/**
+ * Nyan cat!  With flashing lights!
+ * Written by Kieren Davies and Dmirty Panin
+ */
 class NyanCat extends LXPattern {
   
   class Cat {
     
-    int pos;
+    int xPos;
+    int yPos;
     int frame;
     PImage[] frames;
-    static final int rboffset = 8;
+    static final int rbOffset = 8;
     
     public Cat() {
       frames = new PImage[12];
@@ -36,11 +37,8 @@ class NyanCat extends LXPattern {
         frames[i].loadPixels();
       }
       frame = 0;
-      pos = -frames[0].width;
-    }
-    
-    public int getPos() {
-      return pos;
+      xPos = -frames[0].width;
+      yPos = 2;
     }
     
     public boolean isDown() {
@@ -50,55 +48,57 @@ class NyanCat extends LXPattern {
     public void run() {
       PImage img = frames[frame];
       for (int x = 0; x < img.width; ++x) {
-        if (x + pos < 0 || x + pos >= lx.width) continue;
+        if (x + xPos < 0 || x + xPos >= lx.width) continue;
         for (int y = 0; y < img.height; ++y) {
           color c = img.get(x, y);
-          if (c != img.get(0, 0)) {
-            setColor(x + pos, y + 2, c);
+          if (c != img.get(0, 0)) {  //top left corner is transparent
+            setColor(x + xPos, y + yPos, c);
           }
         }
       }
-      if (0 <= pos + rboffset && pos + rboffset < lx.width) {
-        rb.add(pos + rboffset, (isDown() ? 4 : 3));
+      if (0 <= xPos + rbOffset && xPos + rbOffset < lx.width) {
+        rb.add(xPos + rbOffset, (isDown() ? 4 : 3));
       }
-      ++pos;
-      if (pos > lx.width) pos = -img.width;
-      if (pos % 2 == 0) {
+      ++xPos;
+      if (xPos > lx.width) xPos = -img.width;
+      //move 2 units for every frame advance
+      if (xPos % 2 == 0) {
         ++frame;
         frame %= 12;
       }
     }
+    
   }
   
   class Rainbow {
     
     class Slice {
+      
       int xPos;
       int yPos;
       int age;
+      
       public Slice(int x, int y) {
         xPos = x;
         yPos = y;
         age = 0;
       }
-      public void draw() {
+      
+      public void run() {
         for (int y = 0; y < img.height; ++y) {
           color c = img.get(0, y);
           if (age > thresAge) {
-            colorMode(RGB, 255);
-            c = color(map(age, maxAge, thresAge, red(bg), red(c)),
-                      map(age, maxAge, thresAge, green(bg), green(c)),
-                      map(age, maxAge, thresAge, blue(bg), blue(c)));
+            c = lerpColor(c, bg, map(age, thresAge, maxAge, 0.0, 1.0));
           }
           setColor(xPos, yPos + y, c);
         }
-      }
-      public void incrAge() {
         ++age;
       }
-      public int getAge() {
-        return age;
+      
+      public boolean isDead() {
+        return age >= maxAge;
       }
+      
     }
     
     PImage img;
@@ -117,11 +117,12 @@ class NyanCat extends LXPattern {
     }
     
     public void run() {
+      colorMode(RGB);  //for proper fading
       for (Slice slice : slices) {
-        slice.draw();
-        slice.incrAge();
+        slice.run();
       }
-      while (!slices.isEmpty() && slices.getFirst().getAge() >= maxAge) {
+      colorMode(HSB);  //to not interfere with anything else
+      while (!slices.isEmpty() && slices.getFirst().isDead()) {
         slices.removeFirst();
       }
     }
@@ -131,32 +132,36 @@ class NyanCat extends LXPattern {
   class Stars {
     
     class Star {
+      
       int xPos;
       int yPos;
       int age;
+      
       public Star(int x, int y) {
         xPos = x;
         yPos = y;
         age = 0;
       }
-      public void draw() {
+      
+      public void run() {
         PImage img = frames[age/2];
         for (int x = 0; x < img.width; ++x) {
           for (int y = 0; y < img.height; ++y) {
             color c = img.get(x, y);
-            if (c != img.get(0, 0)) {
+            if (c != img.get(0, 0)) {  //top left corner is transparent
               setColor(x + xPos, y + yPos, c);
             }
           }
         }
         ++age;
       }
+      
       public boolean isDead() {
         return age >= 12;
       }
+      
     }
     
-    static final int newstars = 1;
     PImage[] frames;
     LinkedList<Star> stars;
     
@@ -170,12 +175,13 @@ class NyanCat extends LXPattern {
     }
     
     public void run() {
-      for (int i = 0; i < newstars; ++i) {
-        stars.addLast(new Star((int) random(lx.width - 7), (int) random(lx.height - 7)));
-      }
+      //add one new star per tick
+      stars.addLast(new Star((int) random(lx.width - 7), (int) random(lx.height - 7)));
+      //render all current stars
       for (Star star : stars) {
-        star.draw();
+        star.run();
       }
+      //clean up dead stars
       while (!stars.isEmpty() && stars.getFirst().isDead()) {
         stars.removeFirst();
       }
@@ -187,33 +193,35 @@ class NyanCat extends LXPattern {
   Rainbow rb;
   Stars stars;
   final color bg;
-  static final int interval = 50;
-  int lastdraw;
+  static final int tick = 50;
+  int lastrun;
   
   NyanCat(HeronLX lx)   {
     super(lx);
-    colorMode(RGB, 255);
-    bg = color(0, 0, 80);
+    bg = color(210, 100, 40);
     cat = new Cat();
     rb = new Rainbow();
     stars = new Stars();
-    lastdraw = 0;
+    lastrun = millis();
   }
   
   public void run(int deltaMs) {
+    //keep framerate constant
     int time = millis();
-    if (time < lastdraw + interval) return;
+    if (time < lastrun + tick) return;
     //flush background first
     for (int x = 0; x < lx.width; ++x) {
       for (int y = 0; y < lx.height; ++y) {
         setColor(x, y, bg);
       }
     }
+    //colorMode(RGB);  //for proper fading of rainbow
     rb.run();
     stars.run();
     cat.run();
-    //setColor((int)random(lx.width), (int)random(lx.height), color(255, 255, 255));
-    lastdraw = time;
+    //colorMode(HSB);  //to not interfere with following patterns
+    lastrun += tick;
   }
+  
 }
 
