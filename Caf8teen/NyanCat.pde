@@ -33,7 +33,7 @@ class NyanCat extends LXPattern {
     public Cat() {
       frames = new PImage[12];
       for (int i = 0; i < 12; ++i) {
-        frames[i] = loadImage(String.format("nyancat%02d.png", i));
+        frames[i] = loadImage(String.format("nyancat/cat%02d.png", i));
         frames[i].loadPixels();
       }
       frame = 0;
@@ -107,7 +107,7 @@ class NyanCat extends LXPattern {
     static final int thresAge = 15;
     
     public Rainbow() {
-      img = loadImage("nyanrainbow.png");
+      img = loadImage("nyancat/rainbow.png");
       img.loadPixels();
       slices = new LinkedList<Slice>();
     }
@@ -168,7 +168,7 @@ class NyanCat extends LXPattern {
     public Stars() {
       frames = new PImage[6];
       for (int i = 0; i < 6; ++i) {
-        frames[i] = loadImage(String.format("nyanstar%d.png", i));
+        frames[i] = loadImage(String.format("nyancat/star%d.png", i));
         frames[i].loadPixels();
       }
       stars = new LinkedList<Star>();
