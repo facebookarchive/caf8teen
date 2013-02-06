@@ -194,6 +194,7 @@ class NyanCat extends LXPattern {
   Stars stars;
   final color bg;
   static final int tick = 50;
+  static final int resetInterval = 100;
   int lastrun;
   
   NyanCat(HeronLX lx)   {
@@ -206,21 +207,25 @@ class NyanCat extends LXPattern {
   }
   
   public void run(int deltaMs) {
-    //keep framerate constant
+    //frame timing
     int time = millis();
-    if (time < lastrun + tick) return;
+    if (lastrun + resetInterval < time) {
+      lastrun = time;
+    } else if (time < lastrun + tick) {
+      return;
+    } else {
+      lastrun += tick;
+    }
     //flush background first
     for (int x = 0; x < lx.width; ++x) {
       for (int y = 0; y < lx.height; ++y) {
         setColor(x, y, bg);
       }
     }
-    //colorMode(RGB);  //for proper fading of rainbow
+    //draw
     rb.run();
     stars.run();
     cat.run();
-    //colorMode(HSB);  //to not interfere with following patterns
-    lastrun += tick;
   }
   
 }
