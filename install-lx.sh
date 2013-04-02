@@ -1,5 +1,6 @@
 #!/bin/sh
-mkdir -p ~/Documents/Processing/libraries
-rm -fr ~/Documents/Processing/libraries/HeronLX
-unzip -q external/HeronLX.zip -d ~/Documents/Processing/libraries
+SKETCHBOOK=`awk '/sketchbook.path/ {print substr($1, 17);}' ~/Library/Processing/preferences.txt`
+mkdir -p $SKETCHBOOK/libraries
+rm -fr $SKETCHBOOK/libraries/HeronLX
+unzip -q external/HeronLX.zip -d $SKETCHBOOK/libraries
 
