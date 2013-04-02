@@ -20,6 +20,7 @@ import com.heronarts.lx.modulator.*;
 import com.heronarts.lx.pattern.*;
 import com.heronarts.lx.transition.*;
 import ddf.minim.*;
+import java.net.SocketException;
 
 final int numInnerColumns = 111;
 final color fbBlue = #3b5998;
