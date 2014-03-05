@@ -144,10 +144,12 @@ void setup() {
     new Blobbers(lx).setTransition(dissolve),
     new EnterTheDoors(lx).setTransition(dissolve),
     new EveningStars(lx).runDuringInterval(22*O_CLOCK, 5*O_CLOCK).setTransition(dissolve),
-    new MorningSunrise(lx).runDuringInterval(5*O_CLOCK, 7*O_CLOCK).setTransition(rain),    
+    new MorningSunrise(lx).runDuringInterval(5*O_CLOCK, 7*O_CLOCK).setTransition(rain),
+    new NyanCat(lx).setTransition(dissolve),
+    new PacMan(lx).setTransition(dissolve),
   });
   lx.cycleBaseHue(90*SECONDS);
-  lx.enableAutoTransition(5*MINUTES);
+  lx.enableAutoTransition(5*SECONDS);
   lx.enableSimulation(false);
 
   setKinet();
